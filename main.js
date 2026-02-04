@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express()
+
+app.use(express.json())
+
 const port = 3000
 let data = [
     {
@@ -75,7 +78,58 @@ app.get('/api/v1/products/:id', (req, res) => {
             message: "ID NOT FOUND"
         })
     }
+})
 
+function genIncrementalID(data) {
+    let ids = data.map(function (e) {
+        return Number.parseInt(e.id)
+    })
+    return (Math.max(...ids) + 1);
+}
+
+app.post('/api/v1/products/', (req, res) => {
+    console.log();
+    let newObj = {
+        id: genIncrementalID(data) + "",
+        title: req.body.title,
+        views: req.body.views
+    }
+    data.push(newObj);
+    res.send(newObj)
+})
+app.delete('/api/v1/products/:id', (req, res) => {
+    let id = req.params.id;
+    let result = data.filter(function (e) {
+        return !(e.isDeleted) && e.id == id
+    })
+    if (result.length > 0) {
+        result[0].isDeleted = true
+        res.send(result[0])
+    } else {
+        res.status(404).send({
+            message: "ID NOT FOUND"
+        })
+    }
+})
+app.put('/api/v1/products/:id', (req, res) => {
+    let id = req.params.id;
+    let result = data.filter(function (e) {
+        return !(e.isDeleted) && e.id == id
+    })
+    if (result.length > 0) {
+        result = result[0];
+        let keys = Object.keys(req.body);
+        for (const key of keys) {
+            if (result[key]) {
+                result[key] = req.body[key]
+            }
+        }
+        res.send(result)
+    } else {
+        res.status(404).send({
+            message: "ID NOT FOUND"
+        })
+    }
 })
 
 app.listen(port, () => {
