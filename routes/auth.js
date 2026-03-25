@@ -5,16 +5,31 @@ let bcrypt = require('bcrypt')
 let jwt = require('jsonwebtoken')
 let crypto = require('crypto')
 const { CheckLogin } = require("../utils/authHandler");
+let mongoose = require('mongoose')
+let cartModel = require('../schemas/carts')
 const { ChangePasswordValidator, validatedResult } = require("../utils/validateHandler");
 
 router.post('/register', async function (req, res, next) {
+    let session = await mongoose.startSession();
+    session.startTransaction()
     try {
+        //transaction
         let { username, password, email } = req.body;
         let newUser = await userController.CreateAnUser(
-            username, password, email, "69b0ddec842e41e8160132b8"
-        )
-        res.send(newUser)
+            username, password, email, "69b0ddec842e41e8160132b8", session
+        );
+        let newCart = new cartModel({
+            user: newUser._id
+        })
+        await newCart.save({ session })
+        await newCart.populate('user')
+        await session.commitTransaction()
+        await session.endSession()
+        res.send(newCart)
+
     } catch (error) {
+        await session.abortTransaction()
+        await session.endSession()
         res.status(404).send(error.message)
     }
 
@@ -109,14 +124,14 @@ router.post('/forgotpassword', async function (req, res, next) {
 router.post('/resetpassword/:token', async function (req, res, next) {
     let token = req.params.token;
     let password = req.body.password
-    let user  = await userController.GetAnUserByToken(token);
-    if(user){
+    let user = await userController.GetAnUserByToken(token);
+    if (user) {
         user.password = password;
         user.forgotPasswordToken = null;
         user.forgotPasswordTokenExp = null;
         await user.save();
         res.send({
-            message:"update thanh cong"
+            message: "update thanh cong"
         })
     }
 })

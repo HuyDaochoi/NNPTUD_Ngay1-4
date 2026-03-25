@@ -1,6 +1,6 @@
 let userModel = require("../schemas/users");
 module.exports = {
-    CreateAnUser: async function (username, password, email, role,
+    CreateAnUser: async function (username, password, email, role,session,
         fullName, avatarUrl, status, loginCount
     ) {
         let newItem = new userModel({
@@ -13,8 +13,8 @@ module.exports = {
             role: role,
             loginCount: loginCount
         });
-        await newItem.save();
-        return newItem; s
+        await newItem.save({session});
+        return newItem; 
     },
     GetAllUser: async function () {
         let users = await userModel

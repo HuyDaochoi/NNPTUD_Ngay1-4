@@ -22,4 +22,4 @@ let inventorySchema = mongoose.Schema({
         default: 0
     }
 })
-module.exports = new mongoose.model('inventory',inventorySchema)
+module.exports = new mongoose.model('inventory', inventorySchema)

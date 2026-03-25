@@ -71,7 +71,7 @@ router.post('/', async function (req, res, next) {
 
     let newInventory = new inventoryModel({
       product: newProduct._id,
-      stock: -1
+      stock: 0
     })
     await newInventory.save({ session });
     await newInventory.populate('product')
