@@ -28,7 +28,7 @@ app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/carts', require('./routes/carts'));
 app.use('/api/v1/upload', require('./routes/upload'));
 //connect
-mongoose.connect('mongodb://localhost:27017/NNPTUD-S4');
+mongoose.connect('mongodb://localhost:27017/NNPTUD');
 mongoose.connection.on('connected', function () {
   console.log("connected");
 })
