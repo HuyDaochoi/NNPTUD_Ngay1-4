@@ -5,8 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 let mongoose = require('mongoose')
 
-
-
 var app = express();
 
 // view engine setup
@@ -28,6 +26,11 @@ app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/carts', require('./routes/carts'));
 app.use('/api/v1/upload', require('./routes/upload'));
 //connect
+
+
+app.use('/api/v1/carts', require('./routes/carts'));
+app.use('/api/v1/messages', require('./routes/messages'));
+app.use('/api/v1/upload', require('./routes/upload'));
 mongoose.connect('mongodb://localhost:27017/NNPTUD');
 mongoose.connection.on('connected', function () {
   console.log("connected");
